@@ -19,10 +19,10 @@ type Element struct {
 	Data Data      `json:"data"`
 }
 
-var els map[int]Element
-var InElements chan Element
-var InSayMe chan time.Time
-var Out chan []Data
+var els map[int]Element     //Собствеено хранилище данных
+var InElements chan Element //Прием данных для хранения
+var InSayMe chan time.Time  //Тут приходят запросы на выборку
+var Out chan []Data         //Тут отправляем данные
 
 func DataBase() {
 	els = make(map[int]Element)
@@ -36,11 +36,11 @@ func rundb() {
 	for {
 		select {
 		case in := <-InElements:
-			//Пришли данные
+			//Пришли данные со стороны
 			els[in.UID] = in
 			logger.Debug.Printf("%v", in)
 		case t := <-InSayMe:
-			//Запрос данных
+			//Запрос данных в запросе время начала сбора
 			datas := make([]Data, 0)
 			for _, v := range els {
 				if v.Time.After(t) {

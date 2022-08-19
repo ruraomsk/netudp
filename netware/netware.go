@@ -20,6 +20,7 @@ func NetWare() {
 	go reciveUDP()
 }
 func sendUDP() {
+	//Тут пересылаем свои данные
 	ip := fmt.Sprintf("%s:%d", setup.Set.IP, setup.Set.Port)
 	con, err := net.Dial("udp", ip)
 	if err != nil {
@@ -27,6 +28,7 @@ func sendUDP() {
 		return
 	}
 	defer con.Close()
+
 	for {
 		in := <-SendElement
 		buf, err := json.Marshal(in)
@@ -42,6 +44,7 @@ func sendUDP() {
 	}
 }
 func reciveUDP() {
+	//Ждем UDP от всех кто ни попадя
 	addr := net.UDPAddr{Port: setup.Set.Port, IP: net.ParseIP("0.0.0.0")}
 	con, err := net.ListenUDP("udp", &addr)
 	if err != nil {
@@ -49,6 +52,7 @@ func reciveUDP() {
 		return
 	}
 	defer con.Close()
+	//Размер буфера можно поднять если мало
 	buffer := make([]byte, 2048)
 	for {
 		for i := 0; i < len(buffer); i++ {
@@ -72,6 +76,8 @@ func reciveUDP() {
 			logger.Error.Printf("%v %s", string(buf), err.Error())
 			return
 		}
+		//И в базу данных. Тут конечно можно прверить на свое ли это сообщение и не слать
+		//его в базу данных
 		database.InElements <- element
 	}
 }

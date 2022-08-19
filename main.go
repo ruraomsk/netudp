@@ -26,13 +26,14 @@ var (
 var err error
 
 func init() {
+	// Вычитываем настройки
 	setup.Set = new(setup.Setup)
 	if _, err := toml.DecodeFS(config, "config/config.toml", &setup.Set); err != nil {
 		fmt.Println("Dissmis config.toml")
 		os.Exit(-1)
 		return
 	}
-
+	//Создаем каталог для логов
 	os.MkdirAll(setup.Set.LogPath, 0777)
 }
 
@@ -53,13 +54,14 @@ func main() {
 		fmt.Println("need uid for start!")
 		return
 	}
-	database.DataBase()
-	netware.NetWare()
-	hardware.HardWare()
-	display.Display()
+	database.DataBase() //Типа базы данных для хранения принятой информации
+	netware.NetWare()   // Собственно обмен с сетью
+	hardware.HardWare() // Типа сбора информации от датчиков
+	display.Display()   //Типа индикатор
 
 	fmt.Printf("Client %d start\n", setup.Set.UID)
 	logger.Info.Printf("Client %d start\n", setup.Set.UID)
+	//Ждем завершения
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt,
 		syscall.SIGQUIT,
