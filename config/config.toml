@@ -1,0 +1,6 @@
+logpath="log/"
+display=20
+send=10
+cycle=10
+ip="192.168.115.0"
+port=1024
